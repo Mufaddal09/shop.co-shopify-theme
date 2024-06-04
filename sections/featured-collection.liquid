@@ -1,0 +1,84 @@
+<div class="featured-collections-wrap section">
+  <div class="container">
+    <div class="featured-collections">
+      <div class="section-title text-center" data-aos="fade-up">
+        <h3 class="uppercase">{{ section.settings.title }}</h3>
+      </div>
+      <div class="bg-img-wrap" data-aos="fade-up">
+        <div class="row">
+          {% for block in section.blocks %}
+            {% liquid
+              assign loop_length = forloop.length | modulo: 2
+              if loop_length == 1 and forloop.length == forloop.index
+                assign size = 'col-12'
+              elsif block.settings.column_length == '5'
+                assign size = 'col-5'
+              elsif block.settings.column_length == '7'
+                assign size = 'col-7'
+              endif
+            %}
+            <div class="{{size}}">
+              <a href="{{ block.settings.collection.url }}">
+                <div
+                  class="bg-img"
+                  style="background-image: url('{{ block.settings.collection.image | image_url }}')"
+                >
+                  <h4 class="featured-collection-title">
+                    {{ block.settings.collection.title -}}
+                  </h4>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "featured_collection",
+  "presets": [
+    {
+      "name": "Featured Collections"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "collection_cards",
+      "type": "collection_cards",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "collection"
+        },
+        {
+          "type": "select",
+          "id": "column_length",
+          "label": "Column Length",
+          "options": [
+            {
+              "value": "5",
+              "label": "Small"
+            },
+            {
+              "value": "7",
+              "label": "Big"
+            }
+          ],
+          "default": "5"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ]
+}
+{% endschema %}

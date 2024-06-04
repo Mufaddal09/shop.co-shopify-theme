@@ -1,0 +1,83 @@
+{% liquid
+  if template contains 'collection'
+    assign col = 'col-4'
+  else
+    assign col = 'col-3'
+  endif
+%}
+<div class="product-card {{ col }}">
+  <div class="product-img">
+    <a href="{{ product.url }}">
+      <img
+        class="first"
+        loading="lazy"
+        src="{{ product.featured_image | image_url }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+        alt="{{ product.featured_image.alt }}"
+      >
+      <img
+        class="second"
+        src="{{ product.featured_image | image_url }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+      >
+    </a>
+  </div>
+  {% if template contains 'collection' %}
+    <div class="product-title">
+      <a href="{{ product.url }}">
+        <h4>{{ product.title }}</h4>
+      </a>
+    </div>
+    <div class="product-review-wrap">
+      <!-- JUDGE.ME code starts HERE -->
+      <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
+        {{ product.metafields.judgeme.badge }}
+      </div>
+      <!-- JUDGE.ME code ends HERE -->
+    </div>
+    <div class="product-price-wrap">
+      <div class="price">{{ product.price | money_with_currency }}</div>
+      <div class="discounted-price">
+        <div class="compare-at-price">{{ product.compare_at_price | money_with_currency }}</div>
+        <div class="product-discount">
+          {% assign difference = product.compare_at_price | minus: product.price %}
+          {% assign discount = difference | times: 100 | divided_by: product.compare_at_price %}
+          -{{ discount }}%
+        </div>
+      </div>
+    </div>
+  {% else %}
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'product-title' %}
+          <div class="product-title">
+            <a href="{{ product.url }}">
+              <h4>{{ product.title }}</h4>
+            </a>
+          </div>
+        {% when '@app' %}
+          <div class="product-review-wrap">
+            <!-- JUDGE.ME code starts HERE -->
+            <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
+              {{ product.metafields.judgeme.badge }}
+            </div>
+            <!-- JUDGE.ME code ends HERE -->
+          </div>
+        {% when 'price' %}
+          <div class="product-price-wrap">
+            <div class="price">{{ product.price | money_with_currency }}</div>
+            <div class="discounted-price">
+              <div class="compare-at-price">{{ product.compare_at_price | money_with_currency }}</div>
+              <div class="product-discount">
+                {% assign difference = product.compare_at_price | minus: product.price %}
+                {% assign discount = difference | times: 100 | divided_by: product.compare_at_price %}
+                -{{ discount }}%
+              </div>
+            </div>
+          </div>
+      {% endcase %}
+    {% endfor %}
+  {% endif %}
+</div>

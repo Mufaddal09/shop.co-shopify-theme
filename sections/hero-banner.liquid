@@ -1,0 +1,111 @@
+{% if section.settings['primary-btn'] %}
+  {% assign button_type = 'primary-button' %}
+{% else %}
+  {% assign button_type = 'secondary-button' %}
+{% endif %}
+<div class="home-banner-wrap">
+  <div class="container">
+    <div class="home-banner">
+      <div class="row">
+        <div class="left col-6">
+          <div class="title">
+            <h2 class="integral">{{ section.settings['banner-title'] }}</h2>
+          </div>
+          <div class="description">
+            <p>
+              {{ section.settings['banner-description'] }}
+            </p>
+          </div>
+          <div class="cta">
+            <button class="{{ button_type }}">{{ section.settings['banner-url-text'] }}</button>
+          </div>
+          <div class="banner-counter">
+            <ul class="flex">
+              {% for block in section.blocks %}
+                {% if block.type == 'list_content' %}
+                  <li>
+                    <h3 class="counter-number">{{ block.settings.list_content_title }}</h3>
+                    <p class="counter-title">{{ block.settings.list_content_description }}</p>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="right col-6">
+          <div class="image-wrap">
+            <img
+              loading="lazy"
+              src="{{ section.settings.background-img | image_url }}"
+              width="{{ section.settings.background-img.width }}"
+              height="{{ section.settings.background-img.height }}"
+              alt=""
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Hero-banner",
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "list_content",
+      "type": "list_content",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "list_content_title",
+          "label": "List Content Title"
+        },
+        {
+          "type": "text",
+          "id": "list_content_description",
+          "label": "List Content Description"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background-img",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "banner-title",
+      "label": "Banner Title"
+    },
+    {
+      "type": "text",
+      "id": "banner-description",
+      "label": "Banner Discription"
+    },
+    {
+      "type": "text",
+      "id": "banner-url-text",
+      "label": "Banner Url Text"
+    },
+    {
+      "type": "url",
+      "id": "banner-url",
+      "label": "Banner Url"
+    },
+    {
+      "type": "checkbox",
+      "id": "primary-btn",
+      "label": "Primary Button",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

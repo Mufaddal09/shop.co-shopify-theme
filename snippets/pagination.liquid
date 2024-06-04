@@ -1,0 +1,60 @@
+<div
+  class="pagination flex-wrap align-center justify-space-between"
+>
+  <a
+    href="{{ paginate.previous.url }}"
+    class="pagination-previous flex align-center justify-center"
+  >
+    <span class="previous-arrow">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <path
+          d="M15.8332 9.99996H4.1665M4.1665 9.99996L9.99984 15.8333M4.1665 9.99996L9.99984 4.16663"
+          stroke="black"
+          stroke-width="1.67"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </span>
+    <span class="text">{{ paginate.previous.title }}</span>
+  </a>
+  <div class="pagination-inner flex-wrap">
+    {% for nums in paginate.parts %}
+      {% if nums.title == paginate.current_page %}
+        <span class="pagination-active">{{ nums.title }}</span>
+      {% else %}
+        <a class="pagination-inactive" href="{{ nums.url }}">{{ nums.title }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <a
+    href="{{ paginate.next.url }}"
+    class="pagination-next flex align-center justify-center"
+    ><span class="text">{{ paginate.next.title }}</span>
+    <span class="next-arrow">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <g filter="url(#filter0_d_1357_29)">
+          <path
+            d="M5.1665 9.99996H16.8332M16.8332 9.99996L10.9998 4.16663M16.8332 9.99996L10.9998 15.8333"
+            stroke="black"
+            stroke-width="1.67"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </g>
+      </svg>
+    </span>
+  </a>
+</div>

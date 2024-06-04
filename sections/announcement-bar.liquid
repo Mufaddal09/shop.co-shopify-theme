@@ -1,0 +1,32 @@
+<div class="announcement-bar-wrap" id="announcement-bar-wrap">
+  <div class="announcement-bar">
+    <div class="container">
+      <p>
+        {{ section.settings['announcement-text'] }}
+        <a class="underline" href="{{ section.settings.announcement-url }}"> Sign Up Now</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "announcement-bar",
+  "presets": [
+    {
+      "name": "announcement-bar"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "announcement-text",
+      "label": "Announcement"
+    },
+    {
+      "type": "url",
+      "id": "announcement-url",
+      "label": "Announcement Url"
+    }
+  ]
+}
+{% endschema %}

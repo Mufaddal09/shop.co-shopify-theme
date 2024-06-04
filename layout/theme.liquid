@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ content_for_header }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shop.name }}</title>
+    <link rel="stylesheet" href="assets/swiper-bundle.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="assets/locomotive-scroll.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/media.css">
+    {{ 'style.css' | asset_url | stylesheet_tag }}
+    {{ 'admin.css' | asset_url | stylesheet_tag }}
+    {{ 'media.css' | asset_url | stylesheet_tag }}
+  </head>
+
+  <body>
+    {% sections 'group-header' %}
+    {{ content_for_layout }}
+    {% sections 'group-footer' %}
+    <script async src="{{ 'jquery-3.6.0.min.js' | asset_url }}"></script>
+    <script async src="{{ 'swiper-bundle.min.js' | asset_url }}"></script>
+    <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script async src="{{ 'script.js' | asset_url }}"></script>
+  </body>
+</html>
