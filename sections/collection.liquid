@@ -27,434 +27,555 @@
                 </div>
               </div>
               <ul class="filters-list">
-                <li>
-                  <div class="accordion">
-                    <div class="filter-wrap">
-                      <div
-                        class="all-filters-title accordion-title flex justify-space-between align-center"
-                      >
-                        <h5 class="h5 capital">Price</h5>
-                        <div class="filter-dropdown-icon">
-                          <svg
-                            class="arrow-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                          >
-                            <path
-                              d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
-                              fill="black"
-                            />
-                          </svg>
+                <form>
+                  {%- for filter in collection.filters -%}
+                    <details>
+                      <summary>
+                        <div>
+                          <span>{{ filter.label }}</span>
+
+                          {%- if filter.active_values.size > 0 -%}
+                            <span>({{ filter.active_values.size }})</span>
+                          {%- endif -%}
                         </div>
+                      </summary>
+
+                      <div>
+                        <div>
+                          <p>{{ filter.active_values.size }} selected</p>
+                          {%- if filter.active_values.size > 0 -%}
+                            <p><a href="{{ filter.url_to_remove }}">Reset</a></p>
+                          {%- endif -%}
+                        </div>
+                        {%- case filter.type -%}
+                          {%- when 'boolean' -%}
+                            <ul>
+                              <li>
+                                <label for="Filter-{{ filter.param_name }}-{{ filter.true_value.value }}">
+                                  <input
+                                    type="checkbox"
+                                    name="{{ filter.param_name }}"
+                                    value="{{ filter.true_value.value }}"
+                                    id="Filter-{{ filter.param_name }}"
+                                    {% if filter.true_value.active -%}
+                                      checked
+                                    {%- endif %}
+                                    {% if filter.true_value.count == 0 and filter.true_value.active == false -%}
+                                      disabled
+                                    {%- endif -%}
+                                  >
+                                  {{- filter.true_value.label -}}
+                                </label>
+                              </li>
+                              <li>
+                                <label for="Filter-{{ filter.param_name }}-{{ filter.false_value.value }}">
+                                  <input
+                                    type="checkbox"
+                                    name="{{ filter.param_name }}"
+                                    value="{{ filter.false_value.value }}"
+                                    id="Filter-{{ filter.param_name }}"
+                                    {% if filter.false_value.active -%}
+                                      checked
+                                    {%- endif %}
+                                    {% if filter.false_value.count == 0 and filter.false_value.active == false -%}
+                                      disabled
+                                    {%- endif %}
+                                  >
+                                  {{- filter.false_value.label -}}
+                                </label>
+                              </li>
+                            </ul>
+
+                            <div>
+                              <input type="submit" value="Apply">
+                            </div>
+                          {%- when 'list' -%}
+                            <ul>
+                              {%- for filter_value in filter.values -%}
+                                <li>
+                                  <label for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                                    <input
+                                      type="checkbox"
+                                      name="{{ filter_value.param_name }}"
+                                      value="{{ filter_value.value }}"
+                                      id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                      {% if filter_value.active -%}
+                                        checked
+                                      {%- endif %}
+                                      {% if filter_value.count == 0 and filter_value.active == false -%}
+                                        disabled
+                                      {%- endif %}
+                                    >
+                                    <span>
+                                      {%- case filter_value.display.type -%}
+                                        {%- when 'colors' -%}
+                                          {% liquid
+                                            assign size_limit = filter_value.display.value.size | at_most: 4
+                                            assign rotation = '0deg'
+                                            if size_limit == 2
+                                              assign rotation = '45deg'
+                                            endif
+
+                                            assign angle_increment = 360 | divided_by: size_limit
+                                            assign angle = 0
+                                          %}
+                                          {%- capture conic_gradient -%}
+                                                {%- for color in filter_value.display.value limit: size_limit -%}
+                                                  {{ color }} {{ angle }}deg{%- assign angle = angle | plus: angle_increment %} {{ angle }}deg{%- unless forloop.last %}, {%- endunless -%}
+                                                {%- endfor -%}
+                                              {%- endcapture -%}
+                                          <span
+                                            style="
+                                              width: 25px;
+                                              height: 25px;
+                                              border-radius: 50%;
+                                              display: flex;
+                                              justify-content: center;
+                                              align-items: center;
+                                              background: conic-gradient({{ conic_gradient }}); transform: rotateZ({{ rotation }});
+                                            "
+                                          ></span>
+                                        {%- when 'image' -%}
+                                          {{
+                                            filter_value.display.value
+                                            | image_url: width: 25
+                                            | image_tag: alt: filter_value.display.value.alt
+                                          }}
+                                        {%- else -%}
+                                          <span class="visual-display__child"></span>
+                                      {%- endcase -%}
+                                    </span>
+                                    {{ filter_value.label }}
+                                  </label>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+
+                            <div>
+                              <input type="submit" value="Apply">
+                            </div>
+                          {%- when 'price_range' -%}
+                            <div class="filter-group-display__price-range">
+                              <div class="filter-group-display__price-range-from">
+                                <span>{{ cart.currency.symbol }}</span>
+                                <input
+                                  name="{{ filter.min_value.param_name }}"
+                                  id="Filter-{{ filter.min_value.param_name }}"
+                                  {% if filter.min_value.value -%}
+                                    value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                                  {%- endif %}
+                                  type="number"
+                                  placeholder="0"
+                                  min="0"
+                                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                >
+
+                                <label for="Filter-{{ filter.min_value.param_name }}">From</label>
+                              </div>
+                              <div class="filter-group-display__price-range-to">
+                                <span>{{ cart.currency.symbol }}</span>
+
+                                <input
+                                  name="{{ filter.max_value.param_name }}"
+                                  id="Filter-{{ filter.max_value.param_name }}"
+                                  {% if filter.max_value.value -%}
+                                    value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                                  {%- endif %}
+                                  type="number"
+                                  placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                  min="0"
+                                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                >
+
+                                <label for="Filter-{{ filter.max_value.param_name }}">To</label>
+                              </div>
+                            </div>
+
+                            <div class="filter-group-display__submit">
+                              <input type="submit" value="Apply">
+                            </div>
+                        {%- endcase -%}
                       </div>
-                      <div
-                        class="price-range all-filters-body accordion-body"
-                      >
-                        <div class="price-filter">
-                          <div class="range-slider">
-                            <input
-                              type="range"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value="20"
-                              class="range-slider__input"
-                            >
-                            <input
-                              type="range"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value="80"
-                              class="range-slider__input"
-                            >
-                            <div class="range-slider__display">
-                              <!-- This node is optional and only used to display the current values -->
+                    </details>
+                  {%- endfor -%}
+                  <div>
+                    <p><a href="{{ collection.url }}?sort_by={{ collection.sort_by }}">Clear all</a></p>
+                    {%- for filter in collection.filters -%}
+                      {%- if filter.type == 'price_range' -%}
+                        {%- if filter.min_value.value != null or filter.max_value.value != null -%}
+                          <p>
+                            <a href="{{ filter.url_to_remove }}">
+                              {%- assign min_value = filter.min_value.value | default: 0 -%}
+                              {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+                              {{ min_value | money }} - {{ max_value | money }} X
+                            </a>
+                          </p>
+                        {%- endif -%}
+                      {%- else -%}
+                        {%- for filter_value in filter.active_values -%}
+                          <p>
+                            <a href="{{ filter_value.url_to_remove }}">
+                              {{ filter.label }}: {{ filter_value.label }} X
+                            </a>
+                          </p>
+                        {%- endfor -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </form>
+                <form>
+                  {% for filter in collection.filters %}
+                    {% case filter.type %}
+                      {% when 'price_range' %}
+                        <li>
+                          <div class="accordion">
+                            <div class="filter-wrap">
+                              <div
+                                class="all-filters-title accordion-title flex justify-space-between align-center"
+                              >
+                                <h5 class="h5 capital">Price</h5>
+                                <div class="filter-dropdown-icon">
+                                  <svg
+                                    class="arrow-icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="17"
+                                    viewBox="0 0 16 17"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                              <div
+                                class="price-range all-filters-body accordion-body"
+                              >
+                                <div class="price-filter">
+                                  <div class="range-slider">
+                                    <input
+                                      name="{{ filter.min_value.param_name }}"
+                                      {% comment %} id="Filter-{{ filter.min_value.param_name }}" {% endcomment %}
+                                      {% if filter.min_value.value -%}
+                                        value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                                      {%- endif %}
+                                      type="range"
+                                      min="0"
+                                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                      step="1"
+                                      value="0"
+                                      class="range-slider__input"
+                                    >
+                                    <input
+                                      name="{{ filter.max_value.param_name }}"
+                                      {% comment %} id="Filter-{{ filter.max_value.param_name }}" {% endcomment %}
+                                      {% if filter.max_value.value -%}
+                                        value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                                      {%- endif %}
+                                      type="range"
+                                      min="0"
+                                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                      step="1"
+                                      value="{{ filter.range_max | divided_by: 2 }}"
+                                      class="range-slider__input"
+                                    >
+                                    {% comment %}
+                                      <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        step="1"
+                                        value="80"
+                                        class="range-slider__input"
+                                      >
+                                    {% endcomment %}
+                                    <div class="range-slider__display">
+                                      <!-- This node is optional and only used to display the current values -->
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="accordion">
-                    <div class="filter-wrap">
-                      <div
-                        class="all-filters-title accordion-title flex justify-space-between align-center"
-                      >
-                        <h5 class="h5 capital">Colors</h5>
-                        <div class="filter-dropdown-icon">
-                          <svg
-                            class="arrow-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                          >
-                            <path
-                              d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
-                              fill="black"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="all-filters-body accordion-body">
-                        <ul class="color-filter-listing-wrap">
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Green"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Green"
-                                class="color-checkbox"
-                                data-color="Green"
+                        </li>
+                      {% when 'list' %}
+                        <li>
+                          <div class="accordion">
+                            <div class="filter-wrap">
+                              <div
+                                class="all-filters-title accordion-title flex justify-space-between align-center"
                               >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #00c12b"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Red"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Red"
-                                class="color-checkbox"
-                                data-color="Red"
+                                <h5 class="h5 capital">{{ filter.label }}</h5>
+                                <div class="filter-dropdown-icon">
+                                  <svg
+                                    class="arrow-icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="17"
+                                    viewBox="0 0 16 17"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="all-filters-body accordion-body">
+                                <ul class="color-filter-listing-wrap">
+                                  {% for filter_values in filter.values %}
+                                    {% case filter_values.type %}
+                                      {% when 'color' %}
+                                        <li>
+                                          <a
+                                            class="color-filter-link"
+                                            href="#"
+                                            title="Green"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              value="Green"
+                                              class="color-checkbox"
+                                              data-color="Green"
+                                            >
+                                            <span
+                                              class="color-filter color-filter--rounded"
+                                              style="background-color: #00c12b"
+                                            ></span>
+                                          </a>
+                                        </li>
+                                    {% endcase %}
+                                  {% endfor %}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="accordion">
+                            <div class="filter-wrap">
+                              <div
+                                class="all-filters-title accordion-title flex justify-space-between align-center"
                               >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #f50606"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Yellow"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Yellow"
-                                class="color-checkbox"
-                                data-color="Yellow"
+                                <h5 class="h5 capital">Size</h5>
+                                <div class="filter-dropdown-icon">
+                                  <svg
+                                    class="arrow-icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="17"
+                                    viewBox="0 0 16 17"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="all-filters-body accordion-body">
+                                <ul class="size-filter-listing-wrap">
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="XX-Small"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="XX-Small"
+                                        class="size-checkbox"
+                                        data-size="XX-Small"
+                                      >
+                                      <span class="size-filter size-filter--rounded">XX-Small</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="X-Small"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="X-Small"
+                                        class="size-checkbox"
+                                        data-size="X-Small"
+                                      >
+                                      <span class="size-filter size-filter--rounded">X-Small</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="Small"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Small"
+                                        class="size-checkbox"
+                                        data-size="Small"
+                                      >
+                                      <span class="size-filter size-filter--rounded">Small</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="Medium"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Medium"
+                                        class="size-checkbox"
+                                        data-size="Medium"
+                                      >
+                                      <span class="size-filter size-filter--rounded">Medium</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="Large"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Large"
+                                        class="size-checkbox"
+                                        data-size="Large"
+                                      >
+                                      <span class="size-filter size-filter--rounded">Large</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="X-Large"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="X-Large"
+                                        class="size-checkbox"
+                                        data-size="X-Large"
+                                      >
+                                      <span class="size-filter size-filter--rounded">X-Large</span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="size-filter-link"
+                                      href="#"
+                                      title="XX-Large"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="XX-Large"
+                                        class="size-checkbox"
+                                        data-size="XX-Large"
+                                      >
+                                      <span class="size-filter size-filter--rounded">XX-Large</span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="accordion">
+                            <div class="filter-wrap">
+                              <div
+                                class="all-filters-title accordion-title flex justify-space-between align-center"
                               >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #f5dd06"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Orange"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Orange"
-                                class="color-checkbox"
-                                data-color="Orange"
-                              >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #f57906"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Sky Blue"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Sky Blue"
-                                class="color-checkbox"
-                                data-color="Sky Blue"
-                              >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #06caf5"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Dark Blue"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Dark Blue"
-                                class="color-checkbox"
-                                data-color="Dark Blue"
-                              >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #063af5"
-                              ></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="color-filter-link"
-                              href="#"
-                              title="Purple"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Purple"
-                                class="color-checkbox"
-                                data-color="Purple"
-                              >
-                              <span
-                                class="color-filter color-filter--rounded"
-                                style="background-color: #7d06f5"
-                              ></span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="accordion">
-                    <div class="filter-wrap">
-                      <div
-                        class="all-filters-title accordion-title flex justify-space-between align-center"
-                      >
-                        <h5 class="h5 capital">Size</h5>
-                        <div class="filter-dropdown-icon">
-                          <svg
-                            class="arrow-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                          >
-                            <path
-                              d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
-                              fill="black"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="all-filters-body accordion-body">
-                        <ul class="size-filter-listing-wrap">
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="XX-Small"
-                            >
-                              <input
-                                type="checkbox"
-                                value="XX-Small"
-                                class="size-checkbox"
-                                data-size="XX-Small"
-                              >
-                              <span class="size-filter size-filter--rounded">XX-Small</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="X-Small"
-                            >
-                              <input
-                                type="checkbox"
-                                value="X-Small"
-                                class="size-checkbox"
-                                data-size="X-Small"
-                              >
-                              <span class="size-filter size-filter--rounded">X-Small</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="Small"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Small"
-                                class="size-checkbox"
-                                data-size="Small"
-                              >
-                              <span class="size-filter size-filter--rounded">Small</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="Medium"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Medium"
-                                class="size-checkbox"
-                                data-size="Medium"
-                              >
-                              <span class="size-filter size-filter--rounded">Medium</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="Large"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Large"
-                                class="size-checkbox"
-                                data-size="Large"
-                              >
-                              <span class="size-filter size-filter--rounded">Large</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="X-Large"
-                            >
-                              <input
-                                type="checkbox"
-                                value="X-Large"
-                                class="size-checkbox"
-                                data-size="X-Large"
-                              >
-                              <span class="size-filter size-filter--rounded">X-Large</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="size-filter-link"
-                              href="#"
-                              title="XX-Large"
-                            >
-                              <input
-                                type="checkbox"
-                                value="XX-Large"
-                                class="size-checkbox"
-                                data-size="XX-Large"
-                              >
-                              <span class="size-filter size-filter--rounded">XX-Large</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="accordion">
-                    <div class="filter-wrap">
-                      <div
-                        class="all-filters-title accordion-title flex justify-space-between align-center"
-                      >
-                        <h5 class="h5 capital">Category</h5>
-                        <div class="filter-dropdown-icon">
-                          <svg
-                            class="arrow-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="17"
-                            viewBox="0 0 16 17"
-                            fill="none"
-                          >
-                            <path
-                              d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
-                              fill="black"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="all-filters-body accordion-body">
-                        <ul class="category-filter-listing-wrap">
-                          <li>
-                            <a
-                              class="category-filter-link"
-                              href="#"
-                              title="Lehanga"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Lehanga"
-                                class="category-checkbox"
-                                data-size="Lehanga"
-                              >
-                              <span
-                                class="category-filter category-filter--rounded"
-                                >Lehanga</span
-                              >
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="category-filter-link"
-                              href="#"
-                              title="Anarkali"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Anarkali"
-                                class="category-checkbox"
-                                data-size="Anarkali"
-                              >
-                              <span
-                                class="category-filter category-filter--rounded"
-                                >Anarkali</span
-                              >
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="category-filter-link"
-                              href="#"
-                              title="Jumpsuit"
-                            >
-                              <input
-                                type="checkbox"
-                                value="Jumpsuit"
-                                class="category-checkbox"
-                                data-size="Jumpsuit"
-                              >
-                              <span
-                                class="category-filter category-filter--rounded"
-                                >Jumpsuit</span
-                              >
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
+                                <h5 class="h5 capital">Category</h5>
+                                <div class="filter-dropdown-icon">
+                                  <svg
+                                    class="arrow-icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="17"
+                                    viewBox="0 0 16 17"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M2.4694 9.96942L7.4694 4.96942C7.53908 4.8995 7.62187 4.84402 7.71304 4.80617C7.8042 4.76831 7.90194 4.74883 8.00065 4.74883C8.09936 4.74883 8.1971 4.76831 8.28827 4.80617C8.37943 4.84402 8.46222 4.8995 8.5319 4.96942L13.5319 9.96942C13.6728 10.1103 13.752 10.3014 13.752 10.5007C13.752 10.6999 13.6728 10.891 13.5319 11.0319C13.391 11.1728 13.1999 11.252 13.0007 11.252C12.8014 11.252 12.6103 11.1728 12.4694 11.0319L8.00003 6.56254L3.53065 11.0325C3.38976 11.1734 3.19866 11.2526 2.9994 11.2526C2.80015 11.2526 2.60905 11.1734 2.46815 11.0325C2.32726 10.8916 2.2481 10.7006 2.2481 10.5013C2.2481 10.302 2.32726 10.1109 2.46815 9.97004L2.4694 9.96942Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="all-filters-body accordion-body">
+                                <ul class="category-filter-listing-wrap">
+                                  <li>
+                                    <a
+                                      class="category-filter-link"
+                                      href="#"
+                                      title="Lehanga"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Lehanga"
+                                        class="category-checkbox"
+                                        data-size="Lehanga"
+                                      >
+                                      <span
+                                        class="category-filter category-filter--rounded"
+                                        >Lehanga</span
+                                      >
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="category-filter-link"
+                                      href="#"
+                                      title="Anarkali"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Anarkali"
+                                        class="category-checkbox"
+                                        data-size="Anarkali"
+                                      >
+                                      <span
+                                        class="category-filter category-filter--rounded"
+                                        >Anarkali</span
+                                      >
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      class="category-filter-link"
+                                      href="#"
+                                      title="Jumpsuit"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        value="Jumpsuit"
+                                        class="category-checkbox"
+                                        data-size="Jumpsuit"
+                                      >
+                                      <span
+                                        class="category-filter category-filter--rounded"
+                                        >Jumpsuit</span
+                                      >
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                    {% endcase %}
+                  {% endfor %}
+                </form>
               </ul>
             </div>
           </div>
@@ -548,6 +669,7 @@
     </div>
   </div>
 </div>
+
 {% schema %}
 {
   "name": "collection-page",

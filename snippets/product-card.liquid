@@ -8,20 +8,25 @@
 <div class="product-card {{ col }}">
   <div class="product-img">
     <a href="{{ product.url }}">
-      <img
-        class="first"
-        loading="lazy"
-        src="{{ product.featured_image | image_url }}"
-        width="{{ product.featured_image.width }}"
-        height="{{ product.featured_image.height }}"
-        alt="{{ product.featured_image.alt }}"
-      >
-      <img
-        class="second"
-        src="{{ product.featured_image | image_url }}"
-        width="{{ product.featured_image.width }}"
-        height="{{ product.featured_image.height }}"
-      >
+      {% for image in product.images limit: 2 %}
+        <img
+          class="{% if forloop.first %}first{% else %}second{% endif %}"
+          loading="lazy"
+          src="{{ image.src | image_url }}"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          alt="{{ image.alt }}"
+        >
+      {% endfor %}
+
+      {% comment %}
+        <img
+          class="second"
+          src="{{ product.featured_image | image_url }}"
+          width="{{ product.featured_image.width }}"
+          height="{{ product.featured_image.height }}"
+        >
+      {% endcomment %}
     </a>
   </div>
   {% if template contains 'collection' %}
