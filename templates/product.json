@@ -1,7 +1,10 @@
 {
     "sections": {
         "main_product": {
-            "type": "main_product"
+            "type": "main_product",
+            "blocks": {
+                "type": "product_title"
+            }
         }
     },
     "order": [
