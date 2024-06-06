@@ -1,0 +1,132 @@
+{% layout settings.customer_layout %}
+<div class="account-signup-wrap">
+  <div class="wrapper--narrow" data-aos="fade-up">
+    <div class="signup-wrap">
+      <div class="login-title section-title text-center">
+        <h3 class="uppercase">Create Account</h3>
+      </div>
+      <div class="login-have-account">
+        <p>Already have an account?</p>
+        <a class="animated-link" href="{{ routes.account_login_url }}">Sign in here.</a>
+      </div>
+      <div class="form-wrap">
+        {% form 'create_customer' %}
+          {{ form.errors | default_errors }}
+          <div class="form-field">
+            <label for="customerFirstName">First Name</label>
+            <input
+              type="text"
+              name="customer[first_name]"
+              id="customerFirstName"
+              placeholder="First Name"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="customerLastName">Last Name</label>
+            <input
+              type="text"
+              name="customer[last_name]"
+              id="customerLastName"
+              placeholder="Last Name"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="customerEmail">Email</label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="customerEmail"
+              placeholder="Email"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="customerPassword">Password</label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="customerPassword"
+              placeholder="Password"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+            <div
+              class="actions-wrap flex align-center justify-space-between"
+            >
+              <input class="primary-button uppercase" type="submit" value="Create">
+            </div>
+            <div class="form-field return-to-store">
+              <div class="form__legal">
+                <p data-spam-detection-disclaimer="">
+                  This site is protected by reCAPTCHA and the Google
+                  <a href="/pages/privacy-policy"> Privacy Policy </a>
+                  and
+                  <a href="/pages/terms-of-services"> Terms of Service </a>
+                  apply.
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="template">
+  <div id="customer">
+    <!-- Create Customer -->
+    <div id="create-customer">
+      <div class="template_header">
+        <h2 class="title">Create Account</h2>
+      </div>
+
+      {% form 'create_customer' %}
+        {{ form.errors | default_errors }}
+
+        <div class="clearfix large_form">
+          <label for="first_name" class="login">First Name</label>
+          <input type="text" value="" name="customer[first_name]" id="first_name" class="large" size="30">
+        </div>
+
+        <div class="clearfix large_form">
+          <label for="last_name" class="login">Last Name</label>
+          <input type="text" value="" name="customer[last_name]" id="last_name" class="large" size="30">
+        </div>
+
+        <div class="clearfix large_form">
+          <label for="email" class="login">Email Address</label>
+          <input type="email" value="" name="customer[email]" id="email" class="large" size="30">
+        </div>
+
+        <div class="clearfix large_form">
+          <label for="password" class="login">Password</label>
+          <input type="password" value="" name="customer[password]" id="password" class="large password" size="30">
+        </div>
+
+        <div class="action_bottom">
+          <input class="btn" type="submit" value="Create">
+          <span class="note">or <a href="{{ shop.url }}">Return to Store</a></span>
+        </div>
+      {% endform %}
+    </div>
+    <!-- /#create-customer -->
+  </div>
+</div>

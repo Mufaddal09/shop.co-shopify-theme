@@ -1,0 +1,111 @@
+{% layout settings.customer_layout %}
+<div class="account-login-wrap">
+  <div class="wrapper--narrow" data-aos="fade-up">
+    <div class="fade-toggle login-wrap">
+      <div class="login-title section-title text-center">
+        <h3 class="uppercase">Login</h3>
+      </div>
+      <div class="login-have-account">
+        <p>Don't have an account?</p>
+        <a class="animated-link" href="{{ routes.account_register_url }}">Sign up here.</a>
+      </div>
+      <div class="form-wrap">
+        {% form 'customer_login' %}
+          <div class="form-field">
+            <label for="customerEmail">Email</label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="customerEmail"
+              placeholder="Email"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="customerPassword">Password</label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="customerPassword"
+              placeholder="Password"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+            <div
+              class="actions-wrap flex align-center justify-space-between"
+            >
+              <button type="submit" class="primary-button uppercase" value="Sign In">Submit</button>
+              <div class="forgot-password">
+                <button class="animated-link" id="forgotBtn" type="button">Forgot your password?</button>
+              </div>
+            </div>
+            <div class="form-field return-to-store">
+              <a class="animated-link" href="{{ shop.url }}">Return to Store</a>
+              <div class="form__legal">
+                <p data-spam-detection-disclaimer="">
+                  This site is protected by reCAPTCHA and the Google
+                  <a href="/pages/privacy-policy"> Privacy Policy </a>
+                  and
+                  <a href="/pages/terms-of-services"> Terms of Service </a>
+                  apply.
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+    <div class="fade-toggle forgot-pass-wrap hidden">
+      <div class="login-title section-title text-center">
+        <h3 class="uppercase">Reset your password</h3>
+      </div>
+      <div class="login-have-account">
+        <p>We will send you an email to reset your password.</p>
+      </div>
+      <div class="form-wrap">
+        {% form 'recover_customer_password' %}
+          {{ form.errors | default_errors }}
+          <div class="form-field">
+            <label for="recover-email">Email</label>
+            <input
+              type="email"
+              name="email"
+              id="recover-email"
+              placeholder="Email"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <div class="actions-wrap p-0 flex align-center">
+              <button type="submit" class="primary-button uppercase" value="submit">Submit</button>
+              <span>or</span>
+              <div class="cancel">
+                <button class="animated-link" id="cancelBtn" type="button">Cancel</button>
+              </div>
+            </div>
+            <div class="form__legal">
+              <p data-spam-detection-disclaimer="">
+                This site is protected by reCAPTCHA and the Google
+                <a href="/pages/privacy-policy"> Privacy Policy </a>
+                and
+                <a href="/pages/terms-of-services"> Terms of Service </a>
+                apply.
+              </p>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
