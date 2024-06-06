@@ -1,0 +1,108 @@
+{% layout settings.customer_layout %}
+{% if customer.orders != 0 %}
+  <div class="account-page-wrap">
+    <div class="container">
+      <div class="account-page">
+        <div class="row">
+          <div class="col-3">
+            <div
+              class="account-sidebar-wrap"
+              data-aos="fade-up"
+              data-aos-order="1"
+            >
+              <div class="account-sidebar">
+                <div
+                  id="sidebar-accordion"
+                  class="account-title account-sidebar-main-title flex justify-space-between"
+                >
+                  <span>My Account</span>
+                  <svg
+                    width="20px"
+                    ;
+                    height="20px"
+                    ;
+                    aria-hidden="true"
+                    focusable="false"
+                    role="presentation"
+                    class="icon icon-plus"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M6 12h6m6 0h-6m0 0V6m0 6v6"
+                      stroke="#000"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </svg>
+                </div>
+                <ul class="account-sidebar-lists">
+                  <li class="is-current">
+                    <a href="{{ routes.account_url }}">Order History</a>
+                  </li>
+                  <li>
+                    <a href="{{ routes.account_addresses_url }}">View Addresses</a>
+                  </li>
+                  <li>
+                    <a href="/account/logout">Log out</a>
+                  </li>
+                  <li>
+                    <a href="mailto:kunal@krishaweb.com">Support</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-9">
+            <div class="account-main" data-aos="fade-up" data-aos-order="2">
+              <div class="account-main-title section-title text-center">
+                <h3>Order History</h3>
+              </div>
+              {% if customer.orders.size != 0 %}
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="order-number">Order</th>
+                      <th class="date">Date</th>
+                      <th class="payment-status">Payment Status</th>
+                      <th class="fulfillment-status">Fulfillment Status</th>
+                      <th class="total">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in customer.orders %}
+                      <tr class="{% cycle 'odd', 'even' %}">
+                        <td class="order-number">
+                          <span>
+                            <a href="{{ order.customer_url }}">#{{ order.order_number }}</a>
+                          </span>
+                        </td>
+                        <td class="date">
+                          <span class="note">{{ order.created_at | date: '%d %b, %Y' }}</span>
+                        </td>
+                        <td class="payment-status">
+                          <span> {{ order.financial_status }} </span>
+                        </td>
+                        <td class="fulfillment-status">
+                          <span> {{ order.fulfillment_status }} </span>
+                        </td>
+                        <td class="total">
+                          <span class="total money"> {{ order.total_price | money_with_currency }} </span>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="account-page-wrap">
+    <div class="container">
+      <div class="account-page">You havent place any orders</div>
+    </div>
+  </div>
+{% endif %}

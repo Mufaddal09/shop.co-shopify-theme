@@ -1,0 +1,230 @@
+<div class="account-page-wrap">
+  <div class="container">
+    <div class="account-page">
+      <div class="row">
+        <div class="col-3">
+          <div
+            class="account-sidebar-wrap"
+            data-aos="fade-up"
+            data-aos-order="1"
+          >
+            <div class="account-sidebar">
+              <div
+                id="sidebar-accordion"
+                class="account-title account-sidebar-main-title flex justify-space-between"
+              >
+                <span>My Account</span>
+                <svg
+                  width="20px"
+                  ;
+                  height="20px"
+                  ;
+                  aria-hidden="true"
+                  focusable="false"
+                  role="presentation"
+                  class="icon icon-plus"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 12h6m6 0h-6m0 0V6m0 6v6"
+                    stroke="#000"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </div>
+              <ul class="account-sidebar-lists">
+                <li>
+                  <a href="{{ routes.account_url }}">Order History</a>
+                </li>
+                <li>
+                  <a href="{{ routes.account_addresses_url }}">View Addresses</a>
+                </li>
+                <li>
+                  <a href="/account/logout">Log out</a>
+                </li>
+                <li>
+                  <a href="mailto:kunal@krishaweb.com">Support</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-9">
+          <div class="account-main" data-aos="fade-up" data-aos-order="2">
+            <div class="account-main-title section-title text-center">
+              <h3>Order #{{ order.order_number }}</h3>
+            </div>
+            <div id="OrderInfoWrap" class="order-info-wrap">
+              <div class="order-info">
+                <p>Placed on {{ order.created_at | date: '%d %b, %Y %I:%M %p %Z' }}</p>
+                <p class="order-status">
+                  <span class="note">Payment Status:</span>
+                  <span class="status">{{ order.financial_status }}</span>
+                </p>
+                <p class="order-status">
+                  <span class="note">Fulfillment Status:</span>
+                  <span class="status">{{ order.fulfillment_status }}</span>
+                </p>
+                <div class="order-addresses-wrap">
+                  {% if order.billing_address %}
+                    <div class="billing-address">
+                      <p class="h5">Billing Address</p>
+                      <div class="address note">
+                        <p>{{ order.billing_address.name }}</p>
+                        <p>{{ order.billing_address.phone }}</p>
+                        <p>{{ order.billing_address.company }}</p>
+                        <p>{{ order.billing_address.street }}</p>
+                        <p>
+                          {{ order.billing_address.zip }}
+                          {{ order.billing_address.city }}, {{ order.billing_address.province }}
+                        </p>
+                        <p>{{ order.billing_address.country }}</p>
+                      </div>
+                    </div>
+                  {% endif %}
+                  {% if order.shipping_address %}
+                    <div class="shipping-address">
+                      <p class="h5">Shipping Address</p>
+                      <div class="address note">
+                        <p>{{ order.shipping_address.name }}</p>
+                        <p>{{ order.shipping_address.phone }}</p>
+                        <p>{{ order.shipping_address.company }}</p>
+                        <p>{{ order.shipping_address.street }}</p>
+                        <p>
+                          {{ order.shipping_address.zip }}
+                          {{ order.shipping_address.city }}, {{ order.shipping_address.province }}
+                        </p>
+                        <p>{{ order.shipping_address.country }}</p>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <table class="order-info-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Price</th>
+                  <th class="text-center">Quantity</th>
+                  <th class="total">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for line_item in order.line_items %}
+                  <tr class="{% cycle 'odd', 'even' %}" id="{{ line_item.id }}">
+                    <td class="line-item-product">
+                      <span>
+                        <a href="{{ line_item.url }}">{{ line_item.title }}</a>
+                      </span>
+                    </td>
+                    <td class="sku">
+                      <span class="note">{{ line_item.sku }}</span>
+                    </td>
+                    <td class="money">
+                      <span class="money">{{ line_item.final_price | money_with_currency }}</span>
+                    </td>
+                    <td class="quantity text-center">
+                      <span>{{ line_item.quantity }}</span>
+                    </td>
+                    <td class="total">
+                      <span class="total money">
+                        {{- line_item.final_price | times: line_item.quantity | money_with_currency -}}
+                      </span>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr class="order-summary note">
+                  <td class="label" colspan="4">Subtotal:</td>
+                  <td class="total money">{{ order.subtotal_price | money_with_currency }}</td>
+                </tr>
+                {% for shipping_method in order.shipping_methods %}
+                  <tr class="order-summary note">
+                    <td class="label" colspan="4">Shipping ({{ shipping_method.title }}):</td>
+                    <td class="total money">{{ shipping_method.price | money }}</td>
+                  </tr>
+                {% endfor %}
+                {% for tax_line in order.tax_lines %}
+                  <tr class="order-summary note">
+                    <td class="label" colspan="4">
+                      Tax ({{ tax_line.title }}
+                      {{ tax_line.rate | times: 100 }}%):
+                    </td>
+                    <td class="total money">{{ tax_line.price | money }}</td>
+                  </tr>
+                {% endfor %}
+                <tr class="order-summary order-total">
+                  <td class="label" colspan="4">Total:</td>
+                  <td class="total money">{{ order.total_price | money }}</td>
+                </tr>
+              </tfoot>
+            </table>
+            <section
+              class="mobile-order-info"
+              data-aos="fade-up"
+              data-aos-order="3"
+            >
+              <hr>
+              <table>
+                <tbody>
+                  {% for line_item in order.line_items %}
+                    <tr>
+                      <td>
+                        <div class="order-image">
+                          <img
+                            src="{{ line_item.product.featured_image | image_url }}"
+                            width="{{ line_item.product.featured_image.width }}"
+                            height="{{ line_item.product.featured_image.height }}"
+                            alt=""
+                          >
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <a class="mobile-product-title" href="{{ line_item.url }}" title="">
+                            {{ line_item.title }}
+                          </a>
+                          <p>SKU: {{ line_item.sku }}</p>
+                          <p>Quantity: {{ line_item.quantity }}</p>
+                          <p>Price: {{ line_item.final_price | money_with_currency }}</p>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <p><b>Subtotal:</b> Rs. 1,495.00</p>
+              {% for shipping_method in order.shipping_methods %}
+                <p>
+                  <b>Shipping ({{ shipping_method.title }}):</b>
+                  {%- if shipping_method.price == 0 %}
+                    Free
+                  {% else -%}
+                    {{- shipping_method.price | money_with_currency -}}
+                  {%- endif %}
+                </p>
+              {% endfor %}
+              {% for tax_line in order.tax_lines %}
+                <p>
+                  <b
+                    >Tax ({{ tax_line.title }}
+                    {{ tax_line.rate | times: 100 }}%):</b
+                  >
+                  {{ tax_line.price | money_with_currency }}
+                </p>
+              {% endfor %}
+
+              <p class="h5">
+                <b>Total:</b> <span>{{ order.total_price | money_with_currency }}</span>
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

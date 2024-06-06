@@ -149,17 +149,24 @@
       </div>
     </nav>
   </header>
-  <script>
-    let accountLogin = document.getElementById('accountLogin');
-    accountLogin.addEventListener('click', function () {
-      window.location.href = '{{ routes.account_login_url }}';
-    });
-    let cartRedirect = document.getElementById('cartDrawer');
-    cartRedirect.addEventListener('click', function () {
-      window.location.href = '{{ routes.cart_url }}';
-    });
-  </script>
 </div>
+{% liquid
+  if customer
+    assign url = routes.account_url
+  else
+    assign url = routes.account_login_url
+  endif
+%}
+<script>
+  let accountLogin = document.getElementById('accountLogin');
+  accountLogin.addEventListener('click', function () {
+    window.location.href = '{{ url }}';
+  });
+  let cartRedirect = document.getElementById('cartDrawer');
+  cartRedirect.addEventListener('click', function () {
+    window.location.href = '{{ routes.cart_url }}';
+  });
+</script>
 {% schema %}
 {
   "name": "Header",
