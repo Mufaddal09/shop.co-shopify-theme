@@ -1,0 +1,95 @@
+{% liquid
+  if section.settings.image_direction == 'image_left'
+    assign direction = 'invert'
+  endif
+%}
+<section class="brick-section">
+  <div class="brick-section-wrap {{ direction }}">
+    <div class="brick-block" data-aos="fade-up" data-aos-order="1">
+      <div class="hero-content">
+        <h2 class="h2">{{ section.settings.brick_title }}</h2>
+        <div class="hero-body">
+          <p>
+            {{ section.settings.brick_description | strip_html }}
+          </p>
+          <ul>
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'brick_list' %}
+                  <li>{{ block.settings.brick_list }}</li>
+              {% endcase %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="brick-block" data-aos="fade-up" data-aos-order="2">
+      <img
+        src="{{ section.settings.brick_img.src | image_url}}"
+        width="{{ section.settings.brick_img.width }}"
+        height="{{ section.settings.brick_img.height }}"
+        alt="{{ section.settings.brick_img.alt }}"
+      >
+    </div>
+  </div>
+</section>
+<script>
+  var data = {{ section.blocks.type | json }}
+  console.log(data)
+</script>
+{% schema %}
+{
+  "name": "brick_50_50",
+  "presets": [
+    {
+      "name": "brick_50_50"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brick_list",
+      "name": "Brick list",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "brick_list",
+          "label": "Brick list content"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "brick_img",
+      "label": "Brick Image"
+    },
+    {
+      "type": "text",
+      "id": "brick_title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "brick_description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "image_direction",
+      "label": "Image Direction",
+      "options": [
+        {
+          "label": "Image Right",
+          "value": "image_right"
+        },
+        {
+          "label": "Image Left",
+          "value": "image_left"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
