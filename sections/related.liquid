@@ -1,0 +1,67 @@
+<div
+  class="product-recommendations"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related"
+>
+  {%- if recommendations.performed? and recommendations.products_count > 0 -%}
+    <div class="featured-collection-wrap section">
+      <div class="featured-collection">
+        <div class="container">
+          <div class="section-title text-center">
+            {% if recommendations.intent == 'related' %}
+              <h3 class="uppercase">You may also like</h3>
+            {% elsif recommendations.intent == 'complementary' %}
+              <h3 class="uppercase">Pair it with</h3>
+            {% endif %}
+          </div>
+          <div class="product-grid">
+            <div class="row">
+              {% for product in recommendations.products limit: 4 %}
+                {% render 'product-card', product: product %}
+              {% endfor %}
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% javascript %}
+  const handleIntersection = (entries, observer) => {
+    if (!entries[0].isIntersecting) return;
+
+    observer.unobserve(productRecommendationsSection);
+
+    const url = productRecommendationsSection.dataset.url;
+
+    fetch(url)
+      .then((response) => response.text())
+      .then((text) => {
+        const html = document.createElement('div');
+        html.innerHTML = text;
+        const recommendations = html.querySelector('.product-recommendations');
+
+        if (recommendations && recommendations.innerHTML.trim().length) {
+          productRecommendationsSection.innerHTML = recommendations.innerHTML;
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const productRecommendationsSection = document.querySelector('.product-recommendations');
+  const observer = new IntersectionObserver(handleIntersection, { rootMargin: '0px 0px 200px 0px' });
+
+  observer.observe(productRecommendationsSection);
+{% endjavascript %}
+{% schema %}
+{
+  "name": "related_products",
+  "presets": [
+    {
+      "name": "Related Products"
+    }
+  ]
+}
+{% endschema %}
