@@ -353,6 +353,11 @@ document.addEventListener("DOMContentLoaded", function () {
       productClass: ".size-variant",
       radioClass: ".size-radio",
     },
+    {
+      selector: ".style-variant-link",
+      productClass: ".style-variant",
+      radioClass: ".style-radio",
+    },
   ];
 
   products.forEach((product) => {

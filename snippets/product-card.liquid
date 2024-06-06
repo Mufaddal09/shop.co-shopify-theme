@@ -18,18 +18,9 @@
           alt="{{ image.alt }}"
         >
       {% endfor %}
-
-      {% comment %}
-        <img
-          class="second"
-          src="{{ product.featured_image | image_url }}"
-          width="{{ product.featured_image.width }}"
-          height="{{ product.featured_image.height }}"
-        >
-      {% endcomment %}
     </a>
   </div>
-  {% if template contains 'collection' %}
+  {% if template contains 'collection' or 'product' %}
     <div class="product-title">
       <a href="{{ product.url }}">
         <h4>{{ product.title }}</h4>

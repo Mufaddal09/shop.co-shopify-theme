@@ -133,6 +133,8 @@
                                     title="{{value}}"
                                   >
                                     <input
+                                      id="{{ option.name }}-{{ value }}"
+                                      name="{{ option.name }}"
                                       type="radio"
                                       value="{{value}}"
                                       class="color-image-radio"
@@ -164,6 +166,8 @@
                                     title="{{ value }}"
                                   >
                                     <input
+                                      id="{{ option.name }}-{{ value }}"
+                                      name="{{ option.name }}"
                                       type="radio"
                                       value="{{ value }}"
                                       class="size-radio"
@@ -177,26 +181,28 @@
                           </div>
                         </li>
                       {% when 'Style' %}
-                        <li class="product size-swatch">
+                        <li class="product style-swatch">
                           <div class="product-page-info-title p">
                             <p>Choose {{ option.name }}</p>
                           </div>
-                          <div class="size-content">
-                            <ul class="size-variant-listing-wrap">
+                          <div class="style-content">
+                            <ul class="style-variant-listing-wrap">
                               {% for value in option.values %}
                                 <li>
                                   <a
-                                    class="size-variant-link"
+                                    class="style-variant-link"
                                     href="#"
                                     title="{{ value }}"
                                   >
                                     <input
+                                      id="{{ option.name }}-{{ value }}"
+                                      name="{{ option.name }}"
                                       type="radio"
                                       value="{{ value }}"
-                                      class="size-radio"
+                                      class="style-radio"
                                       data-size="{{ value }}"
                                     >
-                                    <span class="size-variant size-variant--rounded">{{ value }}</span>
+                                    <span class="style-variant style-variant--rounded">{{ value }}</span>
                                   </a>
                                 </li>
                               {% endfor %}
@@ -222,7 +228,7 @@
                             ></path>
                           </svg>
                         </button>
-                        <input type="text" class="quantity-input" value="1" name="quantity">
+                        <input type="text" class="quantity-input" value="1" name="quantity" min="1" id="quantity">
                         <button class="increase-btn">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -238,9 +244,11 @@
                           </svg>
                         </button>
                       </div>
+                      <input type="hidden" id="matched-id-input" name="id" value="">
                       {% if product.available %}
                         <input type="submit" class="add-to-cart-btn primary-button" name="Shop Now" value="Add to cart">
                       {% else %}
+                        <input type="number" value="" class="product_varient">
                         <input
                           type="submit"
                           class="add-to-cart-btn primary-button"
@@ -260,6 +268,50 @@
     </div>
   </div>
 </div>
+<script>
+  // Initial array of objects
+  const products = {{ product.variants | json }}
+  console.log(products)
+  
+  // Function to get selected radio button value
+const getSelectedValue = (name) => {
+  const radios = document.getElementsByName(name);
+  for (const radio of radios) {
+      if (radio.checked) {
+          return radio.value;
+      }
+  }
+  return null;
+};
+
+// Function to match options with corresponding ID
+const matchOptionsWithID = () => {
+  const selectedColor = getSelectedValue('color');
+  const selectedSize = getSelectedValue('size');
+  const selectedStyle = getSelectedValue('style');
+
+  const matchedProduct = products.find(product => 
+      product.option1 === selectedColor &&
+      product.option2 === selectedSize &&
+      product.option3 === selectedStyle
+  );
+
+  const matchedID = matchedProduct ? matchedProduct.id : 'None';
+  document.getElementById('matched-id').textContent = `Matched ID: ${matchedID}`;
+
+  // Set the value of hidden input to matched ID
+  document.getElementById('matched-id-input').value = matchedID;
+};
+
+// Add event listeners to radio buttons
+const radioButtons = document.querySelectorAll('input[type=radio]');
+radioButtons.forEach(button => {
+  button.addEventListener('click', matchOptionsWithID);
+});
+
+// Call matchOptionsWithID initially to set the initial matched ID
+matchOptionsWithID();
+</script>
 {% schema %}
 {
   "name": "main-product",
