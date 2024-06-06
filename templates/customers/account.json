@@ -1,0 +1,10 @@
+{
+    "sections": {
+        "order-history": {
+            "type": "order-history"
+        }
+    },
+    "order": [
+        "order-history"
+    ]
+}

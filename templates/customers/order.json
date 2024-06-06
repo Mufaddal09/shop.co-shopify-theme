@@ -1,0 +1,10 @@
+{
+    "sections": {
+        "order-detail": {
+            "type": "order-detail"
+        }
+    },
+    "order": [
+        "order-detail"
+    ]
+}
