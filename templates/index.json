@@ -2,36 +2,34 @@
     "sections": {
         "hero-banner": {
             "type": "hero-banner",
-            "settings": [
-                {
-                    "banner-title": "Insert your title here",
-                    "banner-description": "Insert your description here",
-                    "banner-url-text": "Shop Now"
-                }
-            ],
-            "blocks": [
-                {
+            "settings": {
+                "banner-title": "Insert your title here",
+                "banner-description": "Insert your description here",
+                "banner-url-text": "Shop Now"
+            },
+            "blocks": {
+                "list_content": {
                     "type": "list_content",
                     "settings": {
                         "list_content_title": "Title",
                         "list_content_description": "Description"
                     }
                 },
-                {
+                "list_content-2": {
                     "type": "list_content",
                     "settings": {
                         "list_content_title": "Title",
                         "list_content_description": "Description"
                     }
                 },
-                {
+                "list_content-3": {
                     "type": "list_content",
                     "settings": {
                         "list_content_title": "Title",
                         "list_content_description": "Description"
                     }
                 }
-            ]
+            }
         }
     },
     "order": [
