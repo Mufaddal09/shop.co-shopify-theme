@@ -1,0 +1,71 @@
+<div class="account-login-wrap">
+  <div class="wrapper--narrow" data-aos="fade-up">
+    <div class="fade-toggle login-wrap">
+      <div class="login-title section-title text-center">
+        <h3 class="uppercase">Contact</h3>
+      </div>
+      <div class="login-have-account"></div>
+      <div class="form-wrap">
+        {% form 'contact' %}
+          <div class="form-field">
+            <label for="contactName">Full Name</label>
+            <input
+              type="text"
+              name="contact[full-name]"
+              id="contactName"
+              placeholder="Full Name"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="contactEmail">Email</label>
+            <input
+              type="text"
+              name="contact[email]"
+              id="contactEmail"
+              placeholder="Email"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            >
+          </div>
+          <div class="form-field">
+            <label for="contactMessage">Message</label>
+            <textarea
+              rows="10"
+              type="text"
+              name="contact[body]"
+              id="contactMessage"
+              placeholder="Message"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+            ></textarea>
+          </div>
+          <div class="contact-form-btn form-field">
+            <button type="submit" class="primary-button uppercase">Send</button>
+          </div>
+          <div class="form-field return-to-store">
+            <div class="form__legal">
+              <p data-spam-detection-disclaimer="">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy"> Privacy Policy </a>
+                and
+                <a href="https://policies.google.com/terms"> Terms of Service </a>
+                apply.
+              </p>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="hero-wrap" data-aos="fade-up">
+  <div class="wrapper--full-padded">
+    <div class="hero-image-wrap">
+      <img
+        src="{{ section.settings.image.url | image_url }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        alt="{{ section.settings.image.alt }}"
+      >
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "image-banner",
+  "presets": [
+    {
+      "name": "Image Banner"
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    }
+  ]
+}
+{% endschema %}

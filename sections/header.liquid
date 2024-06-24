@@ -1,5 +1,12 @@
+{% liquid
+  if customer
+    assign url = routes.account_url
+  else
+    assign url = routes.account_login_url
+  endif
+%}
 <div class="header-wrap" id="header-wrap">
-  {% if section.settings['announcement-bar-show'] == true %}
+  {% if section.settings['announcement-bar-show'] %}
     <div class="announcement-bar-wrap" id="announcement-bar-wrap">
       <div class="announcement-bar">
         <div class="container">
@@ -7,7 +14,7 @@
             {{ section.settings['announcement-bar-text'] }}
             {% if section.settings['announcement-bar-url-redirect'] != empty %}
               <a class="underline" href="{{ section.settings.announcement-bar-url-redirect }}">
-                {{ section.settings['announcement-bar-link-text'] -}}
+                {{- section.settings['announcement-bar-link-text'] -}}
               </a>
             {% endif %}
           </p>
@@ -150,13 +157,6 @@
     </nav>
   </header>
 </div>
-{% liquid
-  if customer
-    assign url = routes.account_url
-  else
-    assign url = routes.account_login_url
-  endif
-%}
 <script>
   let accountLogin = document.getElementById('accountLogin');
   accountLogin.addEventListener('click', function () {

@@ -10,7 +10,7 @@ $(document).ready(function () {
 
   //Brand Swiper
   let logoSwiper = new Swiper(".logoSwiper", {
-    slidesPerView: "8",
+    slidesPerView: "6",
     spaceBetween: 50,
     loop: true,
     centeredSlides: true,
@@ -353,23 +353,18 @@ document.addEventListener("DOMContentLoaded", function () {
       productClass: ".size-variant",
       radioClass: ".size-radio",
     },
-    {
-      selector: ".style-variant-link",
-      productClass: ".style-variant",
-      radioClass: ".style-radio",
-    },
   ];
 
   products.forEach((product) => {
     const productLinks = document.querySelectorAll(product.selector);
 
-    // Initialize the first radio button to be checked by default
     if (productLinks.length > 0) {
       const firstLink = productLinks[0];
       const firstRadio = firstLink.querySelector(product.radioClass);
       const firstSpan = firstLink.querySelector(product.productClass);
 
-      firstRadio.checked = true; // Apply box-shadow to the default selected one
+      firstRadio.checked = true;
+      firstRadio.setAttribute("checked", "checked");
     }
 
     productLinks.forEach((link) => {
@@ -379,19 +374,16 @@ document.addEventListener("DOMContentLoaded", function () {
       span.addEventListener("click", (event) => {
         event.preventDefault();
 
-        // Deselect all radio buttons in the same group
         const radioGroup = document.querySelectorAll(
           `${product.selector} ${product.radioClass}`
         );
         radioGroup.forEach((radioBtn) => {
-          const radioSpan = radioBtn
-            .closest(product.selector)
-            .querySelector(product.productClass);
-          radioBtn.checked = false; // Uncheck the radio button
+          radioBtn.checked = false;
+          radioBtn.removeAttribute("checked");
         });
 
-        // Select the clicked radio button
-        radio.checked = true; // Apply box-shadow to the selected one
+        radio.checked = true;
+        radio.setAttribute("checked", "checked");
       });
     });
   });
